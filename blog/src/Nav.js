@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-
-const Nav = ({ search }, { setSearch }) => {
+import { useState } from 'react';
+const Nav = ({search , setSearch}) => {
   return (
     <nav className='Nav'>
       <form className='SearchForm'
