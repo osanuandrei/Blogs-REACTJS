@@ -1,22 +1,32 @@
-import React, { useContext, useState } from 'react';
+import React, {  useState } from 'react';
 import { format  } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
+import api from "./api/posts";
 
 const NewPost = ({posts, setPosts}) => {
   const navigate = useNavigate();
   const [postTitle,setPostTitle] = useState('');
   const [postBody, setPostBody] = useState('');
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const id = posts.length ? posts[posts.length-1].id + 1 : 1;
     const datetime = format(new Date(), 'MMMM dd , yyyy pp')
     const newPost = {id, title: postTitle, datetime, body : postBody}
-    const allPosts = [...posts, newPost]
+  try{
+      const response = await api.post('/posts', newPost)
+    
+    const allPosts = [...posts, response.data]
     setPosts(allPosts);
    
     setPostTitle('');
     setPostBody('');
     navigate('/');
+    
+  }
+  catch(err){
+    console.log(`Error ${err.message}`);
+
+  }
 
   }
   return (

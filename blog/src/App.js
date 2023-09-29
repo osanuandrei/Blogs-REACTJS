@@ -1,5 +1,5 @@
 import {  useEffect, useState} from 'react';
-import { Route, BrowserRouter as Router, Routes, useNavigate, Link } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import About from "./About";
 import Footer from "./Footer";
 import Header from "./Header";
@@ -8,63 +8,62 @@ import Missing from "./Missing";
 import Nav from "./Nav";
 import NewPost from "./NewPost";
 import PostPage from "./PostPage";
+import api from './api/posts';
+import EditPost from './EditPost';
 function App() {
-  const [posts, setPosts] = useState([{
-    id: 1,
-    title: "My First Post",
-    datetime: "July 01, 2021 11:17:36 AM",
-    body: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis consequatur expedita, assumenda similique non optio! Modi nesciunt excepturi corrupti atque blanditiis quo nobis, non optio quae possimus illum exercitationem ipsa!"
-  },
-  {
-    id: 2,
-    title: "My 2nd Post",
-    datetime: "July 01, 2021 11:17:36 AM",
-    body: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis consequatur expedita, assumenda similique non optio! Modi nesciunt excepturi corrupti atque blanditiis quo nobis, non optio quae possimus illum exercitationem ipsa!"
-  },
-  {
-    id: 3,
-    title: "My 3rd Post",
-    datetime: "July 01, 2021 11:17:36 AM",
-    body: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis consequatur expedita, assumenda similique non optio! Modi nesciunt excepturi corrupti atque blanditiis quo nobis, non optio quae possimus illum exercitationem ipsa!"
-  },
-  {
-    id: 4,
-    title: "My Fourth Post",
-    datetime: "July 01, 2021 11:17:36 AM",
-    body: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis consequatur expedita, assumenda similique non optio! Modi nesciunt excepturi corrupti atque blanditiis quo nobis, non optio quae possimus illum exercitationem ipsa!"
-  }]);
+  const [posts, setPosts] = useState([]);
   const [search, setSearch] = useState('');
+  const [searchResult, setSearchResult] = useState([]);
   
   
   useEffect( () =>{
     const filteredResults= posts.filter(post => ((post.body).toLowerCase()).includes(search.toLowerCase())
-  || ((post.title).toLowerCase()).includes(search.toLowerCase())  );
+  || ((post.title).toLowerCase()).includes(search.toLowerCase()) );
   setSearchResult(filteredResults.reverse());
 
 
   }
   , [posts, search])
+
+  useEffect( () => {
+    const fetchPosts = async () => {
+      try{
+        const response = await api.get('/posts');
+        setPosts(response.data);
+
+      }
+      catch (err){
+        //not in the 200 response range
+        console.log(err.response.data);
+
+      }
+    }
+    fetchPosts();
+
+  }, [])
  
-  const [searchResult, setSearchResult] = useState([]);
+  
+  
  
 
   
   return (
     <div className="App">
-      <Router>
+      
       <Header />
       <Nav search={search} setSearch={setSearch}/>
       
         <Routes >
           <Route path="/" element={<Home  posts={searchResult}/>} />
           <Route path="/post" element = {<NewPost posts={posts}  setPosts={setPosts} /> } />
+          <Route path="/edit/:id" element = {<EditPost posts={posts} setPosts={setPosts}/>}/>
           <Route path="/post/:id" element={<PostPage posts={posts} setPosts={setPosts}/> } />
           <Route path="/about" Component={About} />
           <Route path="*" Component={Missing} />
         </Routes>
       
       <Footer />
-      </Router>
+      
      
 
 
