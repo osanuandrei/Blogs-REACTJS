@@ -1,5 +1,5 @@
 import {  useEffect, useState} from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router ,Route, Routes } from 'react-router-dom';
 import About from "./About";
 import Footer from "./Footer";
 import Header from "./Header";
@@ -10,7 +10,11 @@ import NewPost from "./NewPost";
 import PostPage from "./PostPage";
 import api from './api/posts';
 import EditPost from './EditPost';
+import useWindowSize from './hooks/useWindowSize';
+import useAxiosFetch from './hooks/useAxiosFetch';
 function App() {
+  const {data,fetchError, isLoading} = useAxiosFetch("http://localhost:3500/posts");
+  const { width } = useWindowSize();
   const [posts, setPosts] = useState([]);
   const [search, setSearch] = useState('');
   const [searchResult, setSearchResult] = useState([]);
@@ -25,7 +29,12 @@ function App() {
   }
   , [posts, search])
 
-  useEffect( () => {
+  useEffect(() => {
+    setPosts(data);
+
+  },[data])
+
+  /* useEffect( () => {
     const fetchPosts = async () => {
       try{
         const response = await api.get('/posts');
@@ -40,7 +49,7 @@ function App() {
     }
     fetchPosts();
 
-  }, [])
+  }, []) */
  
   
   
@@ -49,12 +58,12 @@ function App() {
   
   return (
     <div className="App">
-      
-      <Header />
+      <Router>
+      <Header width={width}/>
       <Nav search={search} setSearch={setSearch}/>
       
         <Routes >
-          <Route path="/" element={<Home  posts={searchResult}/>} />
+          <Route path="/" element={<Home  fetchError={fetchError} isLoading={isLoading} posts={searchResult}/>} />
           <Route path="/post" element = {<NewPost posts={posts}  setPosts={setPosts} /> } />
           <Route path="/edit/:id" element = {<EditPost posts={posts} setPosts={setPosts}/>}/>
           <Route path="/post/:id" element={<PostPage posts={posts} setPosts={setPosts}/> } />
@@ -63,6 +72,7 @@ function App() {
         </Routes>
       
       <Footer />
+      </Router>
       
      
 

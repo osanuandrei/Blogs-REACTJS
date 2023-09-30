@@ -39,7 +39,7 @@ const EditPost = ( {posts, setPosts}) => {
         {editTitle && 
         <>
       <h2>New Post</h2>
-      <form className='newPostForm' onSubmit={(e) => e.prevent.default()}>
+      <form className='newPostForm' onSubmit={(e) => e.preventDefault()}>
         <label htmlFor='postTitle'>Title</label>
         <input 
         className='postTitle'
