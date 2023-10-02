@@ -1,6 +1,10 @@
 import api from './api/posts';
 import { useParams, Link, useNavigate } from "react-router-dom";
-const PostPage = ( {posts, setPosts}) => {
+import { useContext } from 'react';
+import DataContext from './Context/DataContext';
+
+const PostPage = ( ) => {
+  const { posts , setPosts } = useContext(DataContext);
   const navigate = useNavigate();
   const handleDelete = async (id) => {
     try{

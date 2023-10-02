@@ -2,8 +2,11 @@ import React, {  useState } from 'react';
 import { format  } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import api from "./api/posts";
+import { useContext } from 'react';
+import DataContext from './Context/DataContext';
 
-const NewPost = ({posts, setPosts}) => {
+const NewPost = () => {
+  const {posts, setPosts} = useContext(DataContext);
   const navigate = useNavigate();
   const [postTitle,setPostTitle] = useState('');
   const [postBody, setPostBody] = useState('');
